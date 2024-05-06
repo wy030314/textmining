@@ -1,0 +1,39 @@
+import random
+
+
+with open('199801.txt', 'r', encoding='utf-8') as file:
+    corpus = file.read().replace('\n', '')
+
+
+def build_TriGram_model(corpus):
+    words = corpus.split()
+    TriGram_model = {}
+    for i in range(len(words)-2):
+        word_1 = words[i]
+        word_2 = words[i+1]
+        word_3 = words[i+2]
+        key = (word_1, word_2)
+        if key not in TriGram_model:
+            TriGram_model[key] = []
+        TriGram_model[key].append(word_3)
+    return TriGram_model
+
+TriGram_model = build_TriGram_model(corpus)
+
+
+def generate_sentence(TriGram_model):
+    sentence = []
+    seed = random.randint(0, len(corpus.split())-3)
+    word_1, word_2 = corpus.split()[seed], corpus.split()[seed+1]
+    sentence.extend([word_1, word_2])
+    while (word_1, word_2) in TriGram_model:
+        word_3 = random.choice(TriGram_model[(word_1, word_2)])
+        sentence.append(word_3)
+        word_1, word_2 = word_2, word_3
+    return ' '.join(sentence)
+
+
+generated_sentence = generate_sentence(TriGram_model)
+print("生成的一句话：", generated_sentence)
+
+
